@@ -5,26 +5,58 @@ import (
 	"os"
 	"os/exec"
 	"sort"
-	"strconv"
 )
 
 func main() {
-	// Rename files by order
-	renameFiles()
-	// White background
-	addWhiteBackground()
-	// Add white rectangle on top & bottom
-	addTopAndBottomBar()
-	// Optimize
-	compressImages()
+	var directoryName string
+	fmt.Println("Enter the directory name.")
+	fmt.Scan(&directoryName)
+
+	// Create zip archive
+	//createZip(directoryName)
+	////Create dir
+	//createDir(directoryName)
+	//// Rename files by order
+	renameFiles(directoryName)
+	//// White background
+	//addWhiteBackground(directoryName)
+	//// Add white rectangle on top & bottom
+	//addTopAndBottomBar(directoryName)
+	//// Optimize
+	//compressImages(directoryName)
 	// Create PDF
-	createPDF()
+	//createPDF(directoryName)
 	fmt.Println("Finished!")
 }
 
-func renameFiles() {
+func createZip(directoryName string) {
+	fmt.Println("Add zip archive.")
+	cmd := exec.Command("/bin/bash", "-c", "-path", "rm -r /Users/daniele/misc/"+directoryName+"/converted/ ; cd /Users/daniele/misc/"+directoryName+" && zip -r ../"+directoryName+".zip *")
+	stdout, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println(string(err.Error()))
+		fmt.Printf("combined out:\n%s\n", string(stdout))
+		return
+	}
+	fmt.Println("Finished creating archive.")
+	fmt.Println("--------------------")
+}
+
+func createDir(directoryName string) {
+	fmt.Println("Create dir */converted.")
+	path := "/Users/daniele/misc/" + directoryName + "/converted"
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		_ = os.Mkdir(path, os.ModeDir|0755)
+	}
+	fmt.Println("Finished creating dir */converted.")
+	fmt.Println("--------------------")
+
+}
+
+func renameFiles(directoryName string) {
 	fmt.Println("Rename files by order.")
-	dir := "/Users/daniele/misc/original/"
+
+	dir := "/Users/daniele/misc/" + directoryName + "/"
 	f, _ := os.Open(dir)
 	fis, _ := f.Readdir(-1)
 	_ = f.Close()
@@ -46,9 +78,11 @@ func renameFiles() {
 	var i = 1
 	var newFilename string
 	var oldFilename string
+	var prefixNumber string
 	for _, fi := range fis {
 		fmt.Println(fi.Name())
-		newFilename = dir + strconv.Itoa(i) + ".png"
+		prefixNumber = fmt.Sprintf("%04d", i)
+		newFilename = dir + prefixNumber + ".png"
 		oldFilename = dir + fi.Name()
 		err := os.Rename(oldFilename, newFilename)
 		if err != nil {
@@ -56,15 +90,16 @@ func renameFiles() {
 			return
 		}
 		i++
+
 	}
 
 	fmt.Println("Finished rename files by order.")
 	fmt.Println("--------------------")
 }
 
-func addWhiteBackground() {
+func addWhiteBackground(directoryName string) {
 	fmt.Println("Add white background.")
-	cmd := exec.Command("/usr/local/bin/mogrify", "-path", "/Users/daniele/misc/original/converted", "-format", "png", "-fill", "#FFFFFF", "-opaque", "#E1DFDA", "-fuzz", "1%", "/Users/daniele/misc/original/*.png")
+	cmd := exec.Command("/usr/local/bin/mogrify", "-path", "/Users/daniele/misc/"+directoryName+"/converted", "-format", "png", "-fill", "#FFFFFF", "-opaque", "#E1DFDA", "-fuzz", "1%", "/Users/daniele/misc/"+directoryName+"/*.png")
 	stdout, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println(string(err.Error()))
@@ -75,9 +110,9 @@ func addWhiteBackground() {
 	fmt.Println("--------------------")
 }
 
-func addTopAndBottomBar() {
+func addTopAndBottomBar(directoryName string) {
 	fmt.Println("Add white bar on top and bottom.")
-	cmd1 := exec.Command("/usr/local/bin/mogrify", "-path", "/Users/daniele/misc/original/converted", "-format", "png", "-fill", "white", "-draw", "rectangle 0,0,1440,70", "-fill", "white", "-draw", "rectangle 0,1820,1440,1920", "/Users/daniele/misc/original/converted/*.png")
+	cmd1 := exec.Command("/usr/local/bin/mogrify", "-path", "/Users/daniele/misc/"+directoryName+"/converted", "-format", "png", "-fill", "white", "-draw", "rectangle 0,0,1440,70", "-fill", "white", "-draw", "rectangle 0,1820,1440,1920", "/Users/daniele/misc/"+directoryName+"/converted/*.png")
 	stdout1, err1 := cmd1.CombinedOutput()
 	if err1 != nil {
 		fmt.Println(err1.Error())
@@ -88,9 +123,9 @@ func addTopAndBottomBar() {
 	fmt.Println("--------------------")
 }
 
-func compressImages() {
+func compressImages(directoryName string) {
 	fmt.Println("Start compressing images.")
-	cmd := exec.Command("/bin/bash", "-c", "/usr/local/bin/pngquant --quality 5-10 /Users/daniele/misc/original/converted/*png -f --ext .png")
+	cmd := exec.Command("/bin/bash", "-c", "/usr/local/bin/pngquant --quality 5-10 /Users/daniele/misc/"+directoryName+"/converted/*png -f --ext .png")
 	stdout, err := cmd.CombinedOutput()
 
 	if err != nil {
@@ -102,9 +137,9 @@ func compressImages() {
 	fmt.Println("--------------------")
 }
 
-func createPDF() {
+func createPDF(directoryName string) {
 	fmt.Println("Start creating PDF.")
-	cmd := exec.Command("/bin/bash", "-c", "convert -density 450 $(ls /Users/daniele/misc/original/converted/*.png | sort -n) /Users/daniele/misc/original/converted/output_Book.pdf")
+	cmd := exec.Command("/bin/bash", "-c", "convert -density 450 $(ls /Users/daniele/misc/"+directoryName+"/converted/*.png | sort -n) /Users/daniele/misc/"+directoryName+"/converted/output_Book.pdf")
 	stdout, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println(err.Error())

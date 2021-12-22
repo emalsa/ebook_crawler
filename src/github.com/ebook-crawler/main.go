@@ -26,7 +26,7 @@ func main() {
 
 	for i := 1; i <= pageNumberCount; i++ {
 		takeScreenshot()
-		robotgo.MilliSleep(500)
+		robotgo.MilliSleep(750)
 		nextPage()
 		robotgo.Sleep(2)
 	}
@@ -46,10 +46,9 @@ func activateWindowTab() {
 }
 func nextPage() {
 	robotgo.KeyDown("right")
-	robotgo.MilliSleep(250)
+	robotgo.MilliSleep(350)
 	robotgo.KeyUp("right")
 }
-
 func takeScreenshot() {
 	robotgo.Click()
 }
