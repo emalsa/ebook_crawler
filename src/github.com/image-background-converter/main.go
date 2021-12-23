@@ -9,8 +9,15 @@ import (
 
 func main() {
 	var directoryName string
-	fmt.Println("Enter the directory name.")
-	fmt.Scan(&directoryName)
+	args := os.Args
+
+	// Argument or interactive
+	if len(args) > 1 {
+		directoryName = args[1]
+	} else if directoryName == "" {
+		fmt.Println("Enter the directory name.")
+		fmt.Scan(&directoryName)
+	}
 
 	// Create zip archive
 	createZip(directoryName)
