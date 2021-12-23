@@ -6,29 +6,24 @@ import (
 )
 
 func main() {
-
 	var pageNumberCount int
 	fmt.Println("Enter the number of pages for this books.")
 	fmt.Scan(&pageNumberCount)
-
-	//fmt.Printf("",pageNumberCount,"f")
-	//fmt.Printf("%d\n",pageNumberCount)
-
 	fmt.Printf("Processing now %d pages", pageNumberCount)
-	// Add x pages to be sure we don't miss at the end of the book.
-	pageNumberCount = pageNumberCount + 5
-	initMousePosition()
-	robotgo.Sleep(1)
-	activateWindowTab()
-	robotgo.Sleep(1)
-	goToScreenshotButton()
-	robotgo.Sleep(1)
+	//Add x pages to be sure we don't miss something at end of the book.
 
-	for i := 1; i <= pageNumberCount; i++ {
+	initMousePosition()
+	robotgo.MilliSleep(500)
+	activateWindowTab()
+	robotgo.MilliSleep(500)
+	goToScreenshotButton()
+	robotgo.MilliSleep(500)
+
+	for i := 0; i <= pageNumberCount; i++ {
 		takeScreenshot()
-		robotgo.MilliSleep(750)
+		robotgo.Sleep(1)
 		nextPage()
-		robotgo.Sleep(2)
+		robotgo.Sleep(1)
 	}
 	fmt.Println("End")
 }
@@ -36,7 +31,6 @@ func main() {
 func goToScreenshotButton() {
 	robotgo.MoveSmooth(630, 315)
 }
-
 func initMousePosition() {
 	robotgo.MoveSmooth(0, 0)
 }
