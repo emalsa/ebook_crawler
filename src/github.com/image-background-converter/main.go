@@ -13,19 +13,19 @@ func main() {
 	fmt.Scan(&directoryName)
 
 	// Create zip archive
-	//createZip(directoryName)
-	////Create dir
-	//createDir(directoryName)
-	//// Rename files by order
+	createZip(directoryName)
+	//Create dir
+	createDir(directoryName)
+	// Rename files by order
 	renameFiles(directoryName)
-	//// White background
-	//addWhiteBackground(directoryName)
-	//// Add white rectangle on top & bottom
-	//addTopAndBottomBar(directoryName)
-	//// Optimize
-	//compressImages(directoryName)
+	// White background
+	addWhiteBackground(directoryName)
+	// Add white rectangle on top & bottom
+	addTopAndBottomBar(directoryName)
+	// Optimize
+	compressImages(directoryName)
 	// Create PDF
-	//createPDF(directoryName)
+	createPDF(directoryName)
 	fmt.Println("Finished!")
 }
 
