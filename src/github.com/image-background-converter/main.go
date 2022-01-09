@@ -11,26 +11,36 @@ func main() {
 	var directoryName string
 	args := os.Args
 
-	// Argument or interactive
+	// Argument or with cli
 	if len(args) > 1 {
 		directoryName = args[1]
 	} else if directoryName == "" {
-		fmt.Println("Enter the directory name.")
-		fmt.Scan(&directoryName)
+		fmt.Println("Enter the directory name:")
+		_, err := fmt.Scan(&directoryName)
+		if err != nil {
+			fmt.Println("Problem with directory name input:")
+			return
+		}
 	}
 
 	// Create zip archive
 	createZip(directoryName)
-	//Create dir
+
+	// Create dir
 	createDir(directoryName)
+
 	// Rename files by order
 	renameFiles(directoryName)
+
 	// White background
 	addWhiteBackground(directoryName)
+
 	// Add white rectangle on top & bottom
 	addTopAndBottomBar(directoryName)
+
 	// Optimize
 	compressImages(directoryName)
+
 	// Create PDF
 	createPDF(directoryName)
 	fmt.Println("Finished!")
@@ -48,7 +58,6 @@ func createZip(directoryName string) {
 	fmt.Println("Finished creating archive.")
 	fmt.Println("--------------------")
 }
-
 func createDir(directoryName string) {
 	fmt.Println("Create dir */converted.")
 	path := "/Users/daniele/misc/" + directoryName + "/converted"
@@ -59,7 +68,6 @@ func createDir(directoryName string) {
 	fmt.Println("--------------------")
 
 }
-
 func renameFiles(directoryName string) {
 	fmt.Println("Rename files by order.")
 
@@ -103,7 +111,6 @@ func renameFiles(directoryName string) {
 	fmt.Println("Finished rename files by order.")
 	fmt.Println("--------------------")
 }
-
 func addWhiteBackground(directoryName string) {
 	fmt.Println("Add white background.")
 	cmd := exec.Command("/usr/local/bin/mogrify", "-path", "/Users/daniele/misc/"+directoryName+"/converted", "-format", "png", "-fill", "#FFFFFF", "-opaque", "#E1DFDA", "-fuzz", "1%", "/Users/daniele/misc/"+directoryName+"/*.png")
@@ -116,7 +123,6 @@ func addWhiteBackground(directoryName string) {
 	fmt.Println("Finished adding white background.")
 	fmt.Println("--------------------")
 }
-
 func addTopAndBottomBar(directoryName string) {
 	fmt.Println("Add white bar on top and bottom.")
 	cmd1 := exec.Command("/usr/local/bin/mogrify", "-path", "/Users/daniele/misc/"+directoryName+"/converted", "-format", "png", "-fill", "white", "-draw", "rectangle 0,0,1440,70", "-fill", "white", "-draw", "rectangle 0,1820,1440,1920", "/Users/daniele/misc/"+directoryName+"/converted/*.png")
@@ -129,7 +135,6 @@ func addTopAndBottomBar(directoryName string) {
 	fmt.Println("Finished adding white bar on top and bottom.")
 	fmt.Println("--------------------")
 }
-
 func compressImages(directoryName string) {
 	fmt.Println("Start compressing images.")
 	cmd := exec.Command("/bin/bash", "-c", "/usr/local/bin/pngquant --quality 5-10 /Users/daniele/misc/"+directoryName+"/converted/*png -f --ext .png")
@@ -143,10 +148,9 @@ func compressImages(directoryName string) {
 	fmt.Println("Finished compressing.")
 	fmt.Println("--------------------")
 }
-
 func createPDF(directoryName string) {
 	fmt.Println("Start creating PDF.")
-	cmd := exec.Command("/bin/bash", "-c", "convert -density 450 $(ls /Users/daniele/misc/"+directoryName+"/converted/*.png | sort -n) /Users/daniele/misc/"+directoryName+"/converted/output_Book.pdf")
+	cmd := exec.Command("/bin/bash", "-c", "convert -density 450 $(ls /Users/daniele/misc/"+directoryName+"/converted/*.png | sort -n) /Users/daniele/misc/"+directoryName+"/converted/"+directoryName+".pdf")
 	stdout, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println(err.Error())
