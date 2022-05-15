@@ -3,12 +3,25 @@ package main
 import (
 	"fmt"
 	"github.com/go-vgo/robotgo"
+	"os"
+	"strconv"
 )
 
 func main() {
 	var pageNumberCount int
-	fmt.Println("Enter the number of pages for this books.")
-	fmt.Scan(&pageNumberCount)
+	args := os.Args
+
+	if len(args) > 1 {
+		pageNumberCount, _ = strconv.Atoi(args[1])
+	} else {
+		fmt.Println("Enter the number of pages for this books.")
+		_, err := fmt.Scan(&pageNumberCount)
+		if err != nil {
+			fmt.Println("Problem with directory name input:")
+			return
+		}
+	}
+
 	fmt.Printf("Processing now %d pages", pageNumberCount)
 	//Add x pages to be sure we don't miss something at end of the book.
 
@@ -18,7 +31,6 @@ func main() {
 	robotgo.MilliSleep(500)
 	goToScreenshotButton()
 	robotgo.MilliSleep(500)
-
 	for i := 0; i <= pageNumberCount; i++ {
 		takeScreenshot()
 		robotgo.Sleep(1)
@@ -27,16 +39,15 @@ func main() {
 	}
 	fmt.Println("End")
 }
-
+func activateWindowTab() {
+	robotgo.MoveSmooth(500, 30)
+	robotgo.Click()
+}
 func goToScreenshotButton() {
-	robotgo.MoveSmooth(630, 315)
+	robotgo.MoveSmooth(620, 320)
 }
 func initMousePosition() {
 	robotgo.MoveSmooth(0, 0)
-}
-func activateWindowTab() {
-	robotgo.MoveSmooth(610, 110)
-	robotgo.Click()
 }
 func nextPage() {
 	robotgo.KeyDown("right")

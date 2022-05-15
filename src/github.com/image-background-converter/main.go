@@ -137,7 +137,7 @@ func addTopAndBottomBar(directoryName string) {
 }
 func compressImages(directoryName string) {
 	fmt.Println("Start compressing images.")
-	cmd := exec.Command("/bin/bash", "-c", "/usr/local/bin/pngquant --quality 5-10 /Users/daniele/misc/"+directoryName+"/converted/*png -f --ext .png")
+	cmd := exec.Command("/bin/bash", "-c", "/usr/local/bin/pngquant --quality 15-20 /Users/daniele/misc/"+directoryName+"/converted/*png -f --ext .png")
 	stdout, err := cmd.CombinedOutput()
 
 	if err != nil {
